@@ -34,4 +34,4 @@ for SCRIPT in *.sql; do
 done
 
 cd $COREPATH
-mvn -Dcodegen clean install
+./mvnw -Dcodegen clean install
