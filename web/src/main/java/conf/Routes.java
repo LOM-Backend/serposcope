@@ -24,6 +24,7 @@ import serposcope.controllers.admin.ProxyController;
 import serposcope.controllers.admin.SettingsController;
 import serposcope.controllers.admin.TaskController;
 import serposcope.controllers.google.GoogleGroupController;
+import serposcope.controllers.google.GoogleRestController;
 import serposcope.controllers.google.GoogleSearchController;
 import serposcope.controllers.google.GoogleTargetController;
 
@@ -118,7 +119,8 @@ public class Routes implements ApplicationRoutes {
         router.GET().route("/google/{groupId: [0-9]+}/search/{searchId: [0-9]+}").with(GoogleSearchController.class, "search");
         router.GET().route("/google/{groupId: [0-9]+}/search/{searchId: [0-9]+}/url-ranks").with(GoogleSearchController.class, "urlRanks");
         router.GET().route("/google/{groupId: [0-9]+}/search/{searchId: [0-9]+}/export-serp").with(GoogleSearchController.class, "exportSerp");
-        
+        router.GET().route("/google/{groupId: [0-9]+}/search/{searchId: [0-9]+}/export-serp-rest-api").with(GoogleRestController.class, "exportSerpRestAPI");
+
         router.GET().route("/google/{groupId: [0-9]+}/target/{targetId: [0-9]+}/ranks").with(GoogleTargetController.class, "jsonRanks");
         router.GET().route("/google/{groupId: [0-9]+}/target/{targetId: [0-9]+}/variation").with(GoogleTargetController.class, "jsonVariation");
         router.GET().route("/google/{groupId: [0-9]+}/target/{targetId: [0-9]+}").with(GoogleTargetController.class, "target");

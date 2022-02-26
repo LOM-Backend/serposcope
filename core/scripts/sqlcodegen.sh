@@ -35,4 +35,4 @@ done
 
 cd $COREPATH
 pwd
-./mvnw -Dcodegen clean install
+./mvnw -Dskiptests -Dcodegen clean install
