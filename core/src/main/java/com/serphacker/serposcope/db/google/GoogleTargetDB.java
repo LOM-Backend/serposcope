@@ -147,6 +147,35 @@ public class GoogleTargetDB extends AbstractDB {
         
         return targets;
     }
+
+    public List<GoogleTarget> list(Collection<Integer> groups, String name){
+        List<GoogleTarget> targets = new ArrayList<>();
+
+        try(Connection con = ds.getConnection()){
+
+            SQLQuery<Tuple> query = new SQLQuery<Void>(con, dbTplConf)
+                .select(t_target.all())
+                .from(t_target);
+
+            if(groups != null){
+                query.where(t_target.groupId.in(groups));
+                query.where(t_target.name.eq(name));
+            }
+
+            List<Tuple> tuples = query.fetch();
+
+            if(tuples != null){
+                for (Tuple tuple : tuples) {
+                    targets.add(fromTuple(tuple));
+                }
+            }
+
+        } catch(Exception ex){
+            LOG.error("SQL error", ex);
+        }
+
+        return targets;
+    }
     
     public GoogleTarget get(int targetId){
         GoogleTarget target = null;

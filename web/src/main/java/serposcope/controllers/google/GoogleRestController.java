@@ -3,14 +3,12 @@ package serposcope.controllers.google;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.serphacker.serposcope.db.base.BaseDB;
+import com.serphacker.serposcope.db.base.GroupDB;
 import com.serphacker.serposcope.db.google.GoogleDB;
 import com.serphacker.serposcope.models.base.Group;
 import com.serphacker.serposcope.models.base.Run;
 import com.serphacker.serposcope.models.base.User;
-import com.serphacker.serposcope.models.google.GoogleBest;
-import com.serphacker.serposcope.models.google.GoogleSerp;
-import com.serphacker.serposcope.models.google.GoogleSerpEntry;
-import com.serphacker.serposcope.models.google.GoogleTarget;
+import com.serphacker.serposcope.models.google.*;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
@@ -29,10 +27,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 import static com.serphacker.serposcope.db.base.RunDB.STATUSES_DONE;
 
@@ -45,12 +40,28 @@ public class GoogleRestController {
     @Inject
     BaseDB baseDB;
 
+    @Inject
+    GroupDB groupDB;
+
     public Result exportSerpRestAPI(
-            @PathParam("groupId") Integer groupId,
-            @PathParam("searchId") Integer searchId,
+            @Param("igName") String groupName,
+            @Param("keywordName") String searchKeyword,
             @Param("date") String pDate,
-            @Param("targetId") Integer targetId
+            @Param("lordName") String targetName
     ) {
+
+        Group groupByName = groupDB.findByName(groupName);
+        int groupId = groupByName.getId();
+        int searchId = 0;
+        List<GoogleSearch> googleSearches = googleDB.search.listByGroup(Collections.singletonList(groupByName.getId()));
+        for (GoogleSearch g : googleSearches) {
+            if (g.getKeyword().equals(searchKeyword)) {
+                searchId = g.getId();
+                break;
+            }
+        }
+        int targetId = googleDB.target.list(Collections.singletonList(groupByName.getId()), targetName).get(0).getId();
+
         GoogleSerp serp = null;
         LocalDate date = null;
 

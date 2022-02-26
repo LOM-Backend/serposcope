@@ -163,7 +163,26 @@ public class GroupDB extends AbstractDB {
         }        
         
         return group;
-    }    
+    }
+
+    public Group findByName(String groupName){
+        Group group = null;
+        try(Connection con = ds.getConnection()){
+
+            Tuple tuple = new SQLQuery<Void>(con, dbTplConf)
+                .select(t_group.all())
+                .from(t_group)
+                .where(t_group.name.eq(groupName))
+                .fetchFirst();
+
+            group = fromTuple(tuple);
+
+        }catch(Exception ex){
+            LOG.error("SQLError ex", ex);
+        }
+
+        return group;
+    }
     
     
     Group fromTuple(Tuple tuple){
