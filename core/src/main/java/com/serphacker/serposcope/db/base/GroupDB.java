@@ -182,7 +182,8 @@ public class GroupDB extends AbstractDB {
         }
 
         if (group == null && creation) {
-            group = find(insert(new Group(Module.GOOGLE, groupName)));
+            int insert = insert(new Group(Module.GOOGLE, groupName));
+            group = find(insert);
         }
 
         return group;
