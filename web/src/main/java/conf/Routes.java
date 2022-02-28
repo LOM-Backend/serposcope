@@ -121,6 +121,7 @@ public class Routes implements ApplicationRoutes {
         router.GET().route("/google/{groupId: [0-9]+}/search/{searchId: [0-9]+}/export-serp").with(GoogleSearchController.class, "exportSerp");
         router.GET().route("/api/rest/export-serp").with(GoogleRestController.class, "exportSerpRestAPI");
         router.POST().route("/api/rest/create-new-keyword").with(GoogleRestController.class, "createGoogleSearch");
+        router.POST().route("/api/rest/create-lords").with(GoogleRestController.class, "createLords");
 
         router.GET().route("/google/{groupId: [0-9]+}/target/{targetId: [0-9]+}/ranks").with(GoogleTargetController.class, "jsonRanks");
         router.GET().route("/google/{groupId: [0-9]+}/target/{targetId: [0-9]+}/variation").with(GoogleTargetController.class, "jsonVariation");

@@ -150,4 +150,20 @@ public class GoogleRestController {
 
     }
 
+    public Result createLords(
+            @Param("lordName") String lordName,
+            @Param("lordWebsite") String lordWebsite,
+            @Param("igName") String igName
+    ) {
+        try {
+            int groupId = groupDB.findByName(igName, true).getId();
+            GoogleTarget lord = new GoogleTarget(groupId, lordName, GoogleTarget.PatternType.DOMAIN, lordWebsite);
+            googleDB.target.insert(Collections.singletonList(lord));
+            return Results.ok();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Results.internalServerError();
+        }
+    }
+
 }
