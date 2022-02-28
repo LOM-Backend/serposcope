@@ -1,5 +1,6 @@
 package serposcope.controllers.google;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.serphacker.serposcope.db.base.BaseDB;
@@ -9,6 +10,8 @@ import com.serphacker.serposcope.models.base.Group;
 import com.serphacker.serposcope.models.base.Run;
 import com.serphacker.serposcope.models.base.User;
 import com.serphacker.serposcope.models.google.*;
+import com.serphacker.serposcope.scraper.google.GoogleCountryCode;
+import com.serphacker.serposcope.scraper.google.GoogleDevice;
 import ninja.Context;
 import ninja.Result;
 import ninja.Results;
@@ -20,6 +23,7 @@ import serposcope.controllers.AuthController;
 import serposcope.controllers.HomeController;
 import serposcope.controllers.google.entity.KeywordSearchResults;
 import serposcope.controllers.google.entity.KeywordSearchResultsResponse;
+import serposcope.controllers.google.entity.KeywordsMongoSystem;
 import serposcope.controllers.google.entity.KeywordsSearchResultsOnly;
 import serposcope.helpers.Validator;
 
@@ -50,7 +54,7 @@ public class GoogleRestController {
             @Param("lordName") String targetName
     ) {
 
-        Group groupByName = groupDB.findByName(groupName);
+        Group groupByName = groupDB.findByName(groupName, false);
         int groupId = groupByName.getId();
         int searchId = 0;
         List<GoogleSearch> googleSearches = googleDB.search.listByGroup(Collections.singletonList(groupByName.getId()));
@@ -116,6 +120,32 @@ public class GoogleRestController {
                             keywordSearchResults
                     )
             );
+        }
+
+    }
+
+    public Result createGoogleSearch(@Param("keywords") String keywords1) {
+
+        try {
+            System.out.println(keywords1);
+            ObjectMapper objectMapper = new ObjectMapper();
+            KeywordsMongoSystem keywords = objectMapper.readValue(keywords1, KeywordsMongoSystem.class);
+            System.out.println(keywords.toString());
+
+            GoogleSearch googleSearch1 = new GoogleSearch(0);
+            googleSearch1.setKeyword(keywords.getKeyword());
+            googleSearch1.setCountry(GoogleCountryCode.US);
+            googleSearch1.setDevice(GoogleDevice.DESKTOP);
+
+            for (String igName : keywords.getIndustryCategories()) {
+                googleDB.search.insert(Collections.singletonList(googleSearch1), groupDB.findByName(igName, true).getId());
+            }
+
+            return Results.ok();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            return Results.internalServerError();
         }
 
     }

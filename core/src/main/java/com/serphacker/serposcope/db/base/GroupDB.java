@@ -165,7 +165,7 @@ public class GroupDB extends AbstractDB {
         return group;
     }
 
-    public Group findByName(String groupName){
+    public Group findByName(String groupName, boolean creation){
         Group group = null;
         try(Connection con = ds.getConnection()){
 
@@ -179,6 +179,10 @@ public class GroupDB extends AbstractDB {
 
         }catch(Exception ex){
             LOG.error("SQLError ex", ex);
+        }
+
+        if (group == null && creation) {
+            group = find(insert(new Group(Module.GOOGLE, groupName)));
         }
 
         return group;
